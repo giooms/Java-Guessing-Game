@@ -9,7 +9,7 @@ public class Stack {
 
     public void push(int data){
         Node n = new Node(data, null);
-        size ++;
+        size --;
 
         if(top == null){
             top = n;
