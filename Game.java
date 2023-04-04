@@ -1,3 +1,13 @@
+/*----------------------------------
+* IMPORTATIONS OF NECESSARY LIBS 
+------------------------------------*/
+
+
+
+/*----------------------------------
+* CREATION OF THE NODE CLASS 
+------------------------------------*/
+
 public class Node{
 
     //Allows to specify the type of a node (A or Q).
@@ -11,10 +21,8 @@ public class Node{
 
     public String data; //Represents the text of the node
     public Type type; //Indicates whether it is a A or Q
-
-    //Reference to the child nodes
-    public Node yes;
-    public Node no; 
+    public int n0;
+    public int n1; 
 
     public Node(){ //By default it's empty
     }
@@ -34,16 +42,18 @@ public class Node{
 
         if (data.startsWith(ANSWER_FLAG)) {
         type = Type.ANSWER;
-        }
-
         this.data = data.substring(2); //Removes the flag (for latter use)
+        }
+        else {//We split the string into 3 --> [0] = type, [1]=n1, [2]=n0, [3]=question
+            String[] parts = data.split(" "); 
+            n1 = Integer.parseInt(parts[1]);
+            n0 = Integer.parseInt(parts[2]);
+            this.data = parts[3];
+        }
     }
 
-    public void addYes(TreeNode yes) {
-        this.yes = yes;
-    }
-
-    public void addNo(TreeNode no) {
-        this.no = no;
-    }
 }
+
+/*----------------------------------
+* CREATION OF THE GAME CLASS 
+------------------------------------*/
