@@ -8,7 +8,7 @@ import java.io.FileNotFoundException;
 
 
 class Game{
-    public static void main(String[] args) throws IOException, NoCmdLineArgException{
+    public static void main(String[] args) throws NoCmdLineArgException{
         /**
          * TO BE DELETED: for the sake of understanding
          * 
