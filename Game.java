@@ -44,7 +44,7 @@ public class Node{
         type = Type.ANSWER;
         this.data = data.substring(2); //Removes the flag (for latter use)
         }
-        else {//We split the string into 3 --> [0] = type, [1]=n1, [2]=n0, [3]=question
+        else {//We split the string into 4 --> [0] = type, [1]=n1, [2]=n0, [3]=question
             String[] parts = data.split(" "); 
             n1 = Integer.parseInt(parts[1]);
             n0 = Integer.parseInt(parts[2]);

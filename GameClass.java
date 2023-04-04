@@ -24,6 +24,7 @@ public class Game {
                 current = current.no;
             }
         }
+        // ... 
         System.out.println("Is the team you imagined " + this.data + "?");
         String answer = scanner.nextLine().toLowerCase();
         if (answer.equals("yes") || answer.equals("y")) {
