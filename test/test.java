@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileReader;
@@ -26,30 +27,49 @@ class test{
         // WriterClass.fileWriting(filename, "Ceci est une premiere ligne ajoutee");
         // WriterClass.fileWriting(filename, "Ceci est une seconde ligne ajoutee");
 
-        // Print {filename}.txt
+        // Print {filename}.txt -> OK
         TxtReader fileReader = new TxtReader();
         fileReader.readNow(filename);
+        System.out.println("--------------------------------");
+        
+        // Get txtArray -> OK
+        TxtReader fileReader2 = new TxtReader();
+        ArrayList<String> txtArray = fileReader2.getNow(filename);
+        for (int i = 0; i < txtArray.size(); i++) {
+            System.out.println(txtArray.get(i));
+        }
+        System.out.println("--------------------------------");
+        
+        // Print Error
+        TxtReader fileReader3 = new TxtReader();
+        fileReader3.getLineNow(filename);
+        System.out.println("--------------------------------");
 
         // Print first line
         FirstLineReader flineReader = new FirstLineReader();
         flineReader.readNow(filename);
+        System.out.println("--------------------------------");
         
         // Get First Line
         FirstLineReader flineReader2 = new FirstLineReader();
-        String fline = flineReader2.getFirstLine(filename);
-        System.out.println("Print first line from method getFirstLine() : "+fline);
+        String fline = flineReader2.getLineNow(filename);
+        System.out.println("Print first line from method getLineNow() : "+fline);
+        System.out.println("--------------------------------");
         
-        // Print line at specified index
-        LineAtIndexReader lindexReader = new LineAtIndexReader(7);
-        lindexReader.readNow(filename);
-
-        // Get line at specified index
-        LineAtIndexReader lindexReader2 = new LineAtIndexReader(0);
-        String lindex = lindexReader2.getLineAtIndex(filename, 0);
-        System.out.println("lindex getLineAtIndex(filename, 0) : "+lindex);
-
-        // String fline = ReaderClass.firstLine(filename);
-
+        // // Print line at specified index
+        // LineAtIndexReader lindexReader = new LineAtIndexReader(7);
+        // System.out.println("-> Should not be OK");
+        // lindexReader.readNow(filename);
+        // System.out.println("-> Should be OK");
+        // LineAtIndexReader lindexReader2 = new LineAtIndexReader(2);
+        // lindexReader2.readNow(filename);
+        // System.out.println("--------------------------------");
+        
+        // // Get line at specified index
+        // LineAtIndexReader lindexReader3 = new LineAtIndexReader(2);
+        // ArrayList<String> lindex2 = lindexReader3.getNow(filename);
+        // System.out.println(lindex2.get(0));
+        // System.out.println("--------------------------------");
     }
 }
 
@@ -66,6 +86,11 @@ class IndexNotFoundException extends Exception {
     public IndexNotFoundException(String s) { super(s); }
 }
 
+class InvalidMethodException extends Exception {
+    public InvalidMethodException() { super(); } 
+    public InvalidMethodException(String s) { super(s); }
+}
+
 /*----------------------------------
 * READER CLASSES AND METHODS 
 ------------------------------------*/
@@ -73,14 +98,11 @@ abstract class ReaderClass{
     public void readNow(String filename) {
 
         try {
-            // Creation of a fileReader to read the {filename}.txt
             FileReader fileReader = new FileReader(filename);
-        
-            // Using the file via reader variable
             BufferedReader reader = new BufferedReader (fileReader);
             
             // call the abstract extra method
-            extra(reader);
+            extraRead(reader);
 
             reader.close();
         }
@@ -92,102 +114,19 @@ abstract class ReaderClass{
         catch (IOException e2){
             System.out.println("** Thrown Exception : " + e2.getMessage());
         }    
-        
     }
 
-    protected abstract void extra(BufferedReader reader) throws IOException ;
-}
-
-// Class to read the whole file
-class TxtReader extends ReaderClass {
-    @Override
-    protected void extra(BufferedReader reader) throws IOException {
-        String line;
-        while((line = reader.readLine()) != null) {
-            System.out.println(line);
-        }
-    }
-}
-
-//  Class to read or get the first line
-class FirstLineReader extends ReaderClass {
-    private String firstLine;
-
-    @Override
-    protected void extra(BufferedReader reader) throws IOException {
-        firstLine = reader.readLine();
-        System.out.println(firstLine);
-    }
-
-    public String getFirstLine(String filename) {
-        readNow(filename);
-        return firstLine;
-    }
-}
-
-// Class to read or get any line at the specified index
-class LineAtIndexReader extends TxtReader{
-    private int index;
-    private String lineAtIndex;
-
-    public LineAtIndexReader(int index) {
-        this.index = index;
-    }
-
-    @Override
-    protected void extra(BufferedReader reader) throws IOException {
-        int count = 0;
-        String line, lineAtIndex;
-        while ((line = reader.readLine()) != null && count < this.index) {
-            count++;
-        }
-
-        // Check if count == index (should be), else throw custom exception
-        try{
-            if (count == index){
-                lineAtIndex = line;
-                System.out.println(lineAtIndex);
-            }
-            else {
-                throw new IndexNotFoundException("** Line index " + index + " not found in file.");
-            }
-        }
-        catch (IndexNotFoundException e1) {
-            e1.printStackTrace();
-        }
-
-    }
-
-    //  !!!!!! TO DEBUG !!!!!!
-    public String getLineAtIndex(String filename, int index) {
-        readNow(filename);
-        return lineAtIndex;
-    }
-
-}
-
-class WriterClass{
-    public static void fileWriting(String filename, String textAdded) {
-        
+    public ArrayList<String> getNow(String filename) {
+        ArrayList<String> txtArray = new ArrayList<String>();
         try {
-            // Check if file already exists
-            File file = new File(filename);
-            if (!file.exists()) {
-                throw new FileNotFoundException();
-            }
+            FileReader fileReader = new FileReader(filename);
+            BufferedReader reader = new BufferedReader (fileReader);
 
-            // Creation of a fileWriter to write in the {filename}.txt
-            FileWriter fileWriter = new FileWriter(filename, true);
-            
-            // Creation of bufferedWriter qui utilise le fileWriter
-            BufferedWriter writer = new BufferedWriter (fileWriter);
-            
-            // ajout d’un texte à notre fichier
-            writer.write(textAdded);
-            writer.newLine();
-            
-            writer.close();
-        }
+            // call the abstract extra method
+            extraGet(reader, txtArray);
+
+            reader.close();
+        } 
         // filename.txt not found exception
         catch (FileNotFoundException e1) {
             System.out.println("** FileNotFoundException : " + e1.getMessage() + ". Please create {filename}.txt manually beforehand.");
@@ -195,54 +134,227 @@ class WriterClass{
         // Other exception
         catch (IOException e2){
             System.out.println("** Thrown Exception : " + e2.getMessage());
+        }  
+        return txtArray;
+    }
+
+    public String getLineNow(String filename) {
+        String txtLine = new String();
+        try {
+            FileReader fileReader = new FileReader(filename);
+            BufferedReader reader = new BufferedReader (fileReader);
+
+            // call the abstract extra method
+            extraGetLine(reader, txtLine);
+
+            reader.close();
+        } 
+        // filename.txt not found exception
+        catch (FileNotFoundException e1) {
+            System.out.println("** FileNotFoundException : " + e1.getMessage() + ". Please create {filename}.txt manually beforehand.");
+        }
+        // Other exception
+        catch (IOException e2){
+            System.out.println("** Thrown Exception : " + e2.getMessage());
+        }  
+        return txtLine;
+    }
+
+    protected abstract void extraRead(BufferedReader reader) throws IOException ;
+    protected abstract void extraGet(BufferedReader reader, ArrayList<String> txtArray) throws IOException ;
+    protected abstract void extraGetLine(BufferedReader reader, String txtLine) throws IOException ;
+}
+
+// Class to read the whole file -> OK
+class TxtReader extends ReaderClass {
+
+    @Override
+    protected void extraRead(BufferedReader reader) throws IOException {
+        String line;
+        while((line = reader.readLine()) != null) {
+            System.out.println(line);
         }
     }
 
-    // public static void editFirstLine(String filename){
-    //     // Get firstLine
-    //     String line = ReaderClass.firstLine(filename);
+    @Override
+    protected void extraGet(BufferedReader reader, ArrayList<String> txtArray) throws IOException {
+        String line;
+        while ((line = reader.readLine()) != null) {
+            txtArray.add(line);
+        }
+    }
 
-    //     // Change nb of nodes (+= 2)
-    //     char firstChar = line.charAt(0);
-    //     int firstCharInt = Character.getNumericValue(firstChar);
-    //     firstCharInt += 2;
-    //     char newFirstChar = Character.forDigit(firstCharInt, 10);
-    //     line = newFirstChar + line.substring(1);
-
-    //     // Put back line as first in filename.txt
-    //     try {
-    //         // Check if file already exists
-    //         File tempFile = new File("temp.txt");
-    //         if (!tempFile.exists()) {
-    //             throw new FileNotFoundException();
-    //         }
-
-    //         // Creation of a fileWriter to write in the {filename}.txt
-    //         FileWriter fileWriter = new FileWriter("temp.txt", true);
-            
-    //         // Creation of bufferedWriter qui utilise le fileWriter
-    //         BufferedWriter writer = new BufferedWriter (fileWriter);
-            
-    //         // ajout d’un texte à notre fichier
-    //         writer.write(textAdded);
-    //         writer.newLine();
-            
-    //         writer.close();
-    //     }
-    //     // filename.txt not found exception
-    //     catch (FileNotFoundException e1) {
-    //         System.out.println("** FileNotFoundException : " + e1.getMessage() + ". Please create {filename}.txt manually beforehand.");
-    //     }
-    //     // Other exception
-    //     catch (IOException e2){
-    //         System.out.println("** Thrown Exception : " + e2.getMessage());
-    //     }
-
-    //     // Creation of a fileWriter to write in the {filename}.txt
-    //     FileWriter fileWriter = new FileWriter("temp.txt", true);
-            
-    //     // Creation of bufferedWriter qui utilise le fileWriter
-    //     BufferedWriter writer = new BufferedWriter (fileWriter);
-    // }
-
+    @Override
+    protected void extraGetLine(BufferedReader reader, String txtLine) {
+        try {
+            throw new InvalidMethodException("Cannot use getLineNow() method for TxtReader type variable "+txtLine);
+        }
+        catch (InvalidMethodException e) {
+            System.out.println("Cannot use getLineNow() method for TxtReader type variable.");
+            e.printStackTrace();
+        }
+    }   
 }
+
+//  Class to read or get the first line
+class FirstLineReader extends ReaderClass {
+
+    @Override
+    protected void extraRead(BufferedReader reader) throws IOException {
+        String firstLine = reader.readLine();
+        System.out.println(firstLine);
+    }
+
+    @Override
+    protected void extraGet(BufferedReader reader, ArrayList<String> txtArray) {
+        try {
+            throw new InvalidMethodException("Cannot use getNow() method for FirstLineReader type variable "+txtArray);
+        }
+        catch (InvalidMethodException e) {
+            e.getMessage();
+        }
+    }
+
+    @Override
+    protected void extraGetLine(BufferedReader reader, String txtLine) throws IOException {
+        String tempLine = reader.readLine();
+        txtLine = tempLine;
+    }  
+}
+
+// // Class to read or get any line at the specified index
+// class LineAtIndexReader extends ReaderClass{
+//     private int index;
+
+//     public LineAtIndexReader(int index) {
+//         this.index = index;
+//     }
+
+//     @Override
+//     protected void extraRead(BufferedReader reader) throws IOException {
+//         int count = 0;
+//         String line, lineAtIndex;
+//         while ((line = reader.readLine()) != null && count < this.index) {
+//             count++;
+//         }
+        
+//         // Check if count == index (should be), else throw custom exception
+//         try{
+//             if (count == index){
+//                 lineAtIndex = line;
+//                 System.out.println(lineAtIndex);
+//             }
+//             else {
+//                 throw new IndexNotFoundException("** Line index " + index + " not found in file.");
+//             }
+//         }
+//         catch (IndexNotFoundException e1) {
+//             e1.printStackTrace();
+//         }
+//     }
+    
+//     @Override
+//     protected void extraGet(BufferedReader reader, ArrayList<String> txtArray) throws IOException {
+//         int count = 0;
+//         String line, lineAtIndex;
+//         while ((line = reader.readLine()) != null && count < this.index) {
+//             count++;
+//         }
+
+//         // Check if count == index (should be), else throw custom exception
+//         try{
+//             if (count == index){
+//                 lineAtIndex = line;
+//                 txtArray.add(lineAtIndex);
+//             }
+//             else {
+//                 throw new IndexNotFoundException("** Line index " + index + " not found in file.");
+//             }
+//         }
+//         catch (IndexNotFoundException e1) {
+//             e1.printStackTrace();
+//         }
+//     }
+
+// }
+
+// class WriterClass{
+//     public static void fileWriting(String filename, String textAdded) {
+        
+//         try {
+//             // Check if file already exists
+//             File file = new File(filename);
+//             if (!file.exists()) {
+//                 throw new FileNotFoundException();
+//             }
+
+//             // Creation of a fileWriter to write in the {filename}.txt
+//             FileWriter fileWriter = new FileWriter(filename, true);
+            
+//             // Creation of bufferedWriter qui utilise le fileWriter
+//             BufferedWriter writer = new BufferedWriter (fileWriter);
+            
+//             // ajout d’un texte à notre fichier
+//             writer.write(textAdded);
+//             writer.newLine();
+            
+//             writer.close();
+//         }
+//         // filename.txt not found exception
+//         catch (FileNotFoundException e1) {
+//             System.out.println("** FileNotFoundException : " + e1.getMessage() + ". Please create {filename}.txt manually beforehand.");
+//         }
+//         // Other exception
+//         catch (IOException e2){
+//             System.out.println("** Thrown Exception : " + e2.getMessage());
+//         }
+//     }
+
+//     public static void editFirstLine(String filename){
+//         // Get firstLine
+//         String line = ReaderClass.firstLine(filename);
+
+//         // Change nb of nodes (+= 2)
+//         char firstChar = line.charAt(0);
+//         int firstCharInt = Character.getNumericValue(firstChar);
+//         firstCharInt += 2;
+//         char newFirstChar = Character.forDigit(firstCharInt, 10);
+//         line = newFirstChar + line.substring(1);
+
+//         // Put back line as first in filename.txt
+//         try {
+//             // Check if file already exists
+//             File tempFile = new File("temp.txt");
+//             if (!tempFile.exists()) {
+//                 throw new FileNotFoundException();
+//             }
+
+//             // Creation of a fileWriter to write in the {filename}.txt
+//             FileWriter fileWriter = new FileWriter("temp.txt", true);
+            
+//             // Creation of bufferedWriter qui utilise le fileWriter
+//             BufferedWriter writer = new BufferedWriter (fileWriter);
+            
+//             // ajout d’un texte à notre fichier
+//             writer.write(textAdded);
+//             writer.newLine();
+            
+//             writer.close();
+//         }
+//         // filename.txt not found exception
+//         catch (FileNotFoundException e1) {
+//             System.out.println("** FileNotFoundException : " + e1.getMessage() + ". Please create {filename}.txt manually beforehand.");
+//         }
+//         // Other exception
+//         catch (IOException e2){
+//             System.out.println("** Thrown Exception : " + e2.getMessage());
+//         }
+
+//         // Creation of a fileWriter to write in the {filename}.txt
+//         FileWriter fileWriter = new FileWriter("temp.txt", true);
+            
+//         // Creation of bufferedWriter qui utilise le fileWriter
+//         BufferedWriter writer = new BufferedWriter (fileWriter);
+//     }
+
+// }

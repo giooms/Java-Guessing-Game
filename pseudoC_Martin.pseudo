@@ -1,0 +1,61 @@
+PSEUDO CODE MARTIN
+
+main throws NoCmdLineArgException {
+    EXCEPTION HANDLING {
+        if (args.length == 0) {
+            throw new NoCmdLineArgException("** Please provide a filename as an argument.");
+        }
+        String filename = args[0]+".txt";
+    }
+
+    PREPARATION{
+        // Get txtArray -> CLASSES AND METHODS ALREADY DONE
+        TxtReader fileReader2 = new TxtReader();
+        ArrayList<String> txtArray = fileReader2.getNow(filename);
+
+        // Convert it to an array of Nodes -> TO BE CREATED : Node class, For loop method, String split method 
+        ArrayList<Node> nodeArray = new ArrayList<Node>();
+        if (txtArray.isnotempty()) {
+
+            // TODO: FAIRE DE LA BOUCLE UNE FONCTION PRENANT txtArray EN PARAMETRE (.toNodeArray(txtArray) par ex)
+            for (int i = 0; i < txtArray.size(); i++) {
+                String line = txtArray.get(i);
+                // Check if txt starts with "#", "?" or "="
+                if (Character.isDigit(line.charAt(0))) {
+                    Node newNode = new Node(type, data);        // Here type = FLINE
+                    nodeArray.push(newNode)
+                    continue;
+                }
+                else if (txt.startsWith("?")){
+
+                    // To be put in a method
+                    String[] parts = line.split("\\s+", 4);     // split on whitespace, max 4 parts
+                    String type = parts[0];                     // first part is the question mark
+                    int n1 = Integer.parseInt(parts[1]);        // second part is n1
+                    int n0 = Integer.parseInt(parts[2]);        // third part is n0                    
+                    String data = parts[3];
+
+                    Node newNode = new Node(type, n1, n0, data);    
+                    nodeArray.push(newNode);
+                    continue;
+                }
+                else if (txt.startsWith("=")){
+                    // To be put in a method
+                    String[] parts = line.split("\\s+", 2);     // split on whitespace, max 2 parts
+                    String type = parts[0];                
+                    String data = parts[3];
+
+                    Node newNode = new Node(type, data);
+                    nodeArray.push(newNode);
+                    continue;
+                }
+                
+            }
+            // At this point, the Array of String txtArray has been converted into an Array of Nodes, each node with its attributes .type and .data (minimum) (+ .n1 and .n0 eventually)
+        }
+        else if (txtArray.isEmpty()) {
+            throw new 
+        }
+        
+    }
+}
