@@ -1,4 +1,10 @@
-LA premiere ligne
-Ceci est une premiere ligne ajoutee
-Ceci est une seconde ligne ajoutee
-Ceci est une troisième ligne ajoutee
+9 Please choose a team
+? 2 3 Is the team based in Europe
+? 4 5 Has the team won last year
+= haas
+= red bull
+? 6 7 Is the team color red
+= ferrari   
+? 8 9 Is the team british
+= aston martin
+= mercedes

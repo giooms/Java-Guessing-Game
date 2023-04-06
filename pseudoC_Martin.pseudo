@@ -73,7 +73,7 @@ main throws NoCmdLineArgException {
 
     LANCEMENT DU JEU{
         // Variables initialisation and welcome message
-        Scanner scanner = start();  // See defined function below
+        Scanner scanner = start();
         String userAnswer, userInput, newAnswer, newQuestion;
         int i = 1;
         
@@ -189,69 +189,3 @@ main throws NoCmdLineArgException {
     }
 }
 
-/**
-* Starts the game and returns a Scanner object to handle user input.
-*
-* @return : Scanner object to handle user input.
-*/
-public Scanner start() {
-    Scanner scanner = new Scanner(System.in);
-    System.out.println("Welcome to the game! Think of a Formula 1 Team and I will try to guess it :).");
-    return scanner
-}
-
-/**
-* Updates the decision tree represented by the given ArrayList of nodes with new question and answer nodes at the specified index i.
-*
-* @param nodeArray  : the ArrayList of nodes representing the decision tree to be updated
-* @param newQNode   : the new question node to be added at index i
-* @param newANode   : the new answer node to be added at index i+1
-* @param i          : the index at which the new question and answer nodes are to be added
-*
-* @return the updated ArrayList of nodes representing the decision tree
-*/
-public ArrayList<Node> updateTree(ArrayList<Node> nodeArray, Node newQNode, Node newANode, int i) {
-    // Initialize new decision tree auxNodeArray
-    ArrayList<Node> auxNodeArray = new ArrayList<Node>();
-    auxNodeArray = nodeArray;
-    auxNodeArray.add(i, newQNode);
-    auxNodeArray.add(i+1, newANode);
-
-    for(int currIndex = 0; currIndex < auxNodeArray.length(), currIndex++){
-
-        if (currIndex = i){
-            // Found the new Question -> Set correct n1 and n0
-            if (userInput.equals("y")) { 
-                auxNodeArray[currIndex].n1 = currIndex + 1; 
-                auxNodeArray[currIndex].n0 = i
-            }
-            else if (userInput.equals("n")) { 
-                auxNodeArray[currIndex].n1 = i; 
-                auxNodeArray[currIndex].n0 = currIndex +1 
-            }
-        }
-
-        else if(auxNodeArray[currIndex].type == "?" && auxNodeArray[currIndex].data != auxNodeArray[i].data){
-            // Found a question at index currIndex that is not new Question <=> already existing Question
-            int j = 0, a = 0, b = 0;
-            int auxN1, auxN0;
-            // Search for the index j of that question in nodeArray
-            while(auxNodeArray[currIndex] != nodeArray[j]) { j++; }
-            // Once found, get back original n1 and n0
-            auxN1 = nodeArray[j].n1;
-            auxN0 = nodeArray[j].n0;
-            // And get back the nodes at those indexes (n1 and n0)
-            Node temp1 = new Node();
-            Node temp2 = new Node();
-            temp1 = nodeArray[auxN1];
-            temp2 = nodeArray[auxN0];
-            // Loop through auxNodeArray until identical nodes found : get back their index (=a and =b)
-            while (auxNodeArray[a] != temp1){ a++; }
-            while (auxNodeArray[b] != temp2){ b++; }
-            // Set (n1;n0) from currIndex question as those new indexes a and b
-            auxNodeArray[currIndex].n1 = a;
-            auxNodeArray[currIndex].n0 = b;
-        }    
-    }
-    return auxNodeArray;
-}
