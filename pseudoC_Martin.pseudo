@@ -29,8 +29,8 @@ main throws NoCmdLineArgException {
                         String type = parts[0];                
                         String data = parts[1];
 
-                        Node newNode = new Node(type, data);        // Here type = FLINE
-                        nodeArray.push(newNode)
+                        Node newNode = new Node(type, data);        // Here type = #
+                        nodeArray.add(newNode)
                         continue;
                     }
                     else if (txt.startsWith("?")){
@@ -43,7 +43,7 @@ main throws NoCmdLineArgException {
                         String data = parts[3];
     
                         Node newNode = new Node(type, n1, n0, data);    
-                        nodeArray.push(newNode);
+                        nodeArray.add(newNode);
                         continue;
                     }
                     else if (txt.startsWith("=")){
@@ -53,7 +53,7 @@ main throws NoCmdLineArgException {
                         String data = parts[1];
     
                         Node newNode = new Node(type, data);
-                        nodeArray.push(newNode);
+                        nodeArray.add(newNode);
                         continue;
                     }
                     
@@ -72,84 +72,186 @@ main throws NoCmdLineArgException {
     }
 
     LANCEMENT DU JEU{
+        // Variables initialisation and welcome message
         Scanner scanner = start();  // See defined function below
-
-        // Already defined function -> Prints "Please choose a team:"
+        String userAnswer, userInput, newAnswer, newQuestion;
+        int i = 1;
+        
+        // Already defined function -> Prints "Please choose a team:" and lets the user choose
         FirstLineReader flineReader = new FirstLineReader();
         flineReader.readNow(filename);
+        userAnswer = scanner.next();
 
-        
-        String userInput = scanner.next();
-        System.out.println(userInput);
+        // Beginning of the guessing game
+        while (i < nodeArray.size()){
+            if (nodeArray[i].type == QUESTION) {
+                // ----------------------------------------------------------------
+                // Create method typeQuestion
+                System.out.println(nodeArray[i].data+" ? (Y/N)");
 
-        Node current = root;
-        while (current.isQuestion()) {
-            System.out.println(this.data + " (Y/N) ?");
-            String answer = scanner.nextLine().toLowerCase();
-            if (answer.equals("yes") || answer.equals("y")) {
-                current = current.yes;
-            } else {
-                current = current.no;
+                    // --------------------------------------
+                    // Create method for userInput handling ? -> "userInputHandler" for example
+                    userInput = scanner.next();
+                    if (userInput.size() > 1){
+                        userInput = userInput.charAt(0).toLowerCase();
+                    }
+                    if (userInput != "y" || userInput != "n"){
+                        System.out.println("Invalid input. Try again !");
+                        userInputHandler();
+                    }
+                    // --------------------------------------
+                
+                if(userInput == "y"){
+                    i = nodeArray[i].n1;
+                    continue;
+                }
+                else if (userInput == "y"){
+                    i = nodeArray[i].n0;
+                    continue;
+                }
+                // ----------------------------------------------------------------
+                 
+            }
+            else if (nodeArray[i].type == ANSWER){
+                // ----------------------------------------------------------------
+                // Create method typeAnswer
+                System.out.println("Is it "+nodeArray[i].data+" ? (Y/N)");
+
+                    // --------------------------------------
+                    // Create method for userInput handling ? -> "userInputHandler" for example
+                    while (true) {
+                        userInput = scanner.next();
+                        if (userInput.length() > 1) {
+                            userInput = userInput.substring(0, 1).toLowerCase();
+                        }
+
+                        if (userInput.equals("y") || userInput.equals("n")) {
+                            break;
+                        } 
+                        else {
+                            System.out.println("Invalid input. Try again !");
+                        }
+                    }
+                    // (return userInput)
+                    // --------------------------------------
+
+                if (userInput.equals("y")){
+                    System.out.println("I have won!");
+                    break;
+                }
+                else if (userInput.equals("n")){
+                    System.out.println("I am unable to guess; you have won!\nWhat did you choose?");
+                    newAnswer = scanner.next();
+                    
+                    System.out.println("What question could I ask to distinguish "+userAnswer+" from "+nodeArray[i].data+"?");
+                    newQuestion = scanner.next();
+                    
+                    System.out.println("For "+userAnswer+", would you answer yes or no to this question (Y/N)?");
+                    // --------------------------------------
+                    // Create method for userInput handling ? -> "userInputHandler" for example
+                    while (true) {
+                        userInput = scanner.next();
+                        if (userInput.length() > 1) {
+                            userInput = userInput.substring(0, 1).toLowerCase();
+                        }
+                        
+                        if (userInput.equals("y") || userInput.equals("n")) {
+                            break;
+                        } 
+                        else {
+                            System.out.println("Invalid input. Try again !");
+                        }
+                    }
+                    // (return userInput)
+                    // --------------------------------------
+                    
+                    Node newQNode = new Node("?", 0, 0, newQuestion);
+                    Node newANode = new Node("=", newAnswer);
+
+                    /**
+                    * METHOD TO BE IMPLEMENTED
+                    *
+                    * @param : nodeArray, newQnode, newANode
+                    * 
+                    * - Initialiser un { ArrayList<Node> auxNodeArray }
+                    * - Boucler à travers l'ancien nodeArray et recopier dans auxNodeArray jusqu'à index i (?) (set variable temp = i)
+                    * - A l'index (i) de auxNodeArray, insérer newQNode (avec n1 et n0 initialisé à 0), suivi de newANode (à (i+1)), puis recopier tous les anciens nodes dans auxNodeArray en bouclant dans nodeArray depuis la variable temp
+                    * - Boucler à nouveau en // dans les 2 array pour màj n1 et n0 de chaque question node dans auxNodeArray (utiliser des variables tampons probablement)
+                    * - Recopier auxNodeArray dans nodeArray puis return nodeArray
+                    */
+                    nodeArray = updateTree(nodeArray, newQNode, newANode, i);
+                    
+                }
+                // ---------------------------------------------------------------- 
             }
         }
-        // ... 
-        System.out.println("Is the team you imagined " + this.data + "?");
-        String answer = scanner.nextLine().toLowerCase();
-        if (answer.equals("yes") || answer.equals("y")) {
-            System.out.println("I win!");
-        } else {
-            System.out.println("I give up.");
-            //Coder la suite pour améliorer la liste 
-        }
-
-        print(array[0].data);
-        i=1;
-        while (i < array.length){
-            if (array[i].type == QUESTION) {
-                print(array[i].data);
-                input(Y || N ?);
-                if(Y){
-                    i = array[i].n1;
-                    continue;
-                }
-                else if (N){
-                    i = array[i].n0;
-                    continue;
-                }
-                else {
-                    print("Répondre Y ou N");
-                    continue;
-                }            
-            }
-            else if (array[i].type == ANSWER){
-                print("J'ai trouvé ! C'est "+array[i].data+". Correct ? (Y or N)");
-                input(Y || N ?);
-                if (Y){
-                    print("J'ai gagné!");
-                    exit;
-                }
-                else if (N){
-                    print("Qu'avais-tu en tête ?");
-                    newTeam = input();
-                    print("Quelle question pourrais-je poser pour le différencier?");
-                    newQuestion = input();
-                    print("Pour cette question réponderiez-vous Oui ou Non pour "+newTeam+" ?");
-                    newChild = input();
-
-                    Node newNode = new Node();
-                    newNode.setData()
-                }
-                else {
-                    print("Répondre Y ou N");
-                    continue;
-                }
-            }
-        }
+        return;
     }
 }
 
+/**
+* Starts the game and returns a Scanner object to handle user input.
+*
+* @return : Scanner object to handle user input.
+*/
 public Scanner start() {
     Scanner scanner = new Scanner(System.in);
     System.out.println("Welcome to the game! Think of a Formula 1 Team and I will try to guess it :).");
     return scanner
+}
+
+/**
+* Updates the decision tree represented by the given ArrayList of nodes with new question and answer nodes at the specified index i.
+*
+* @param nodeArray  : the ArrayList of nodes representing the decision tree to be updated
+* @param newQNode   : the new question node to be added at index i
+* @param newANode   : the new answer node to be added at index i+1
+* @param i          : the index at which the new question and answer nodes are to be added
+*
+* @return the updated ArrayList of nodes representing the decision tree
+*/
+public ArrayList<Node> updateTree(ArrayList<Node> nodeArray, Node newQNode, Node newANode, int i) {
+    // Initialize new decision tree auxNodeArray
+    ArrayList<Node> auxNodeArray = new ArrayList<Node>();
+    auxNodeArray = nodeArray;
+    auxNodeArray.add(i, newQNode);
+    auxNodeArray.add(i+1, newANode);
+
+    for(int currIndex = 0; currIndex < auxNodeArray.length(), currIndex++){
+
+        if (currIndex = i){
+            // Found the new Question -> Set correct n1 and n0
+            if (userInput.equals("y")) { 
+                auxNodeArray[currIndex].n1 = currIndex + 1; 
+                auxNodeArray[currIndex].n0 = i
+            }
+            else if (userInput.equals("n")) { 
+                auxNodeArray[currIndex].n1 = i; 
+                auxNodeArray[currIndex].n0 = currIndex +1 
+            }
+        }
+
+        else if(auxNodeArray[currIndex].type == "?" && auxNodeArray[currIndex].data != auxNodeArray[i].data){
+            // Found a question at index currIndex that is not new Question <=> already existing Question
+            int j = 0, a = 0, b = 0;
+            int auxN1, auxN0;
+            // Search for the index j of that question in nodeArray
+            while(auxNodeArray[currIndex] != nodeArray[j]) { j++; }
+            // Once found, get back original n1 and n0
+            auxN1 = nodeArray[j].n1;
+            auxN0 = nodeArray[j].n0;
+            // And get back the nodes at those indexes (n1 and n0)
+            Node temp1 = new Node();
+            Node temp2 = new Node();
+            temp1 = nodeArray[auxN1];
+            temp2 = nodeArray[auxN0];
+            // Loop through auxNodeArray until identical nodes found : get back their index (=a and =b)
+            while (auxNodeArray[a] != temp1){ a++; }
+            while (auxNodeArray[b] != temp2){ b++; }
+            // Set (n1;n0) from currIndex question as those new indexes a and b
+            auxNodeArray[currIndex].n1 = a;
+            auxNodeArray[currIndex].n0 = b;
+        }    
+    }
+    return auxNodeArray;
 }

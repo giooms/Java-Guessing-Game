@@ -1,0 +1,43 @@
+Je boucle dans auxNodeArray et dès que je tombe sur une question:
+  Si question != newQ{
+      Je veux la retrouver dans nodeArray -> Je boucle dans nodeArray jusqu'à la trouver et je récupère n1 et n0
+      Je vais voir aux index n1 et n0 et j'initialise un Node temp = new Node("=", nodeArray[n1 ou n0].data) 
+          Puis je retourne boucler dans auxNodeArray et compare chaque auxNodeArray[i] à temp
+              Si c'est un match, je récupère i et je set n1 ou n0 à i
+  }
+  Sinon
+
+------------------------------------------------------------------------------
+int mainTemp = i;
+for(int currIndex = 0; currIndex < auxNodeArray.length(), currIndex++){
+    if (currIndex = mainTemp){
+        // Found the new Question -> Set correct n1 and n0
+        if (userInput.equals("y")) { 
+            auxNodeArray[currIndex].n1 = currIndex + 1; 
+            auxNodeArray[currIndex].n0 = i
+        }
+        else if (userInput.equals("n")) { 
+            auxNodeArray[currIndex].n1 = i; 
+            auxNodeArray[currIndex].n0 = currIndex +1 
+        }
+    }
+    else if(auxNodeArray[currIndex].type == "?" && auxNodeArray[currIndex].data != auxNodeArray[mainTemp].data){
+        // Found a question at index currIndex that is not new Question
+        int j = 0, a = 0, b = 0;
+        int auxN1, auxN0;
+        // Search for the index (=j) of that same question in nodeArray
+        while(auxNodeArray[currIndex] != nodeArray[j]) { j++; }
+        // Once found, get back original n1 and n0
+        auxN1 = nodeArray[j].n1;
+        auxN0 = nodeArray[j].n0;
+        // And get back the nodes at those indexes (n1 and n0)
+        Node temp1 = new Node("=", nodeArray[auxN1].data);
+        Node temp2 = new Node("=", nodeArray[auxN0].data);
+        // Loop through auxNodeArray until identical nodes found, get back their index (=a and =b)
+        while (auxNodeArray[a] != temp1){ a++; }
+        while (auxNodeArray[b] != temp2){ b++; }
+        // Set (n1;n0) from currIndex question as those new indexes a and b
+        auxNodeArray[currIndex].n1 = a;
+        auxNodeArray[currIndex].n0 = b;
+    }    
+}
