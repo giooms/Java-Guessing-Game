@@ -1,0 +1,8 @@
+7 Please choose a F1 team
+? 2 3 Is the team based in Europe
+? 4 5 Has the team won last year
+= Haas
+= Red Bull
+? 6 7 Is the team's color red
+= Ferrari
+= Mercedes
